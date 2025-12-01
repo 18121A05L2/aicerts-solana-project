@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import "./IssueCredential.css";
 import { toast } from "react-toastify";
@@ -11,7 +12,7 @@ type TemplateField = {
 };
 
 type Template = {
-  _id: { oid: string };
+  _id: { $oid: string };
   templateName: string;
   fields: TemplateField[];
   logo?: string;
@@ -33,6 +34,7 @@ export function IssueCredential() {
       txSignature: string;
     }
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const [recipientWallet, setRecipientWallet] = useState("");
   const [metadata, setMetadata] = useState<any>(null);
@@ -86,16 +88,19 @@ export function IssueCredential() {
       templateName: selectedTemplate.templateName,
       recipientWallet,
       fields: selectedTemplate.fields,
-      logo: selectedTemplate.logo ?? null,
-      signature: selectedTemplate.signature ?? null,
+      ...(selectedTemplate.logo && { logo: selectedTemplate.logo }),
+      ...(selectedTemplate.signature && {
+        signature: selectedTemplate.signature,
+      }),
       issuedAt: new Date().toISOString(),
     };
-    console.log({ metadataObj });
 
     setMetadata(metadataObj);
   };
-
+  // TODO : clear all data once certificate is issued
   const issueCredential = async () => {
+    setIsLoading(true);
+
     if (!metadata) return toast.error("Please generate metadata first");
     // 6. Save in backend
     try {
@@ -115,9 +120,11 @@ export function IssueCredential() {
         const err = await res.json();
         throw new Error(err.message);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log({ err });
       toast.error(`Issuance failed: ${err?.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,7 +215,7 @@ export function IssueCredential() {
           disabled={!metadata}
           onClick={issueCredential}
         >
-          Issue Credential on Solana
+          {isLoading ? "Issuing..." : "   Issue Credential on Solana"}
         </button>
         {credentialData?.credentialId && (
           <p>

@@ -49,10 +49,7 @@ export const getMetadataByCertId = async (req: Request, res: Response) => {
     const verifyResult = await verify(certId, data.metadata);
 
     if (verifyResult?.isValid) {
-      res.json({
-        success: true,
-        data,
-      });
+      res.json(data);
     } else {
       res.status(404).json({
         success: false,

@@ -5,19 +5,16 @@ import "./Verification.css";
 
 import { backendDomain } from "../constants";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export function Verification() {
   const [searchParams] = useSearchParams();
   const credentialIdFromParams = searchParams.get("credentialId");
-  const [credentialId, setCredentialId] = useState<string>(
-    credentialIdFromParams ?? ""
-  );
+  const [credentialId, setCredentialId] = useState<string>("");
   const [errorData, setErrorData] = useState<any>(null);
 
   const [metadata, setMetadata] = useState<any>(null);
-  const [verificationStatus, setVerificationStatus] = useState<
-    "valid" | "invalid" | "loading"
-  >("loading");
+  const [verificationStatus, setVerificationStatus] = useState("");
 
   const [onchainData, setOnchainData] = useState<any>(null);
 
@@ -25,43 +22,41 @@ export function Verification() {
   // Verify Against On-Chain Data
   // -----------------------------
   const verify = async () => {
-    setVerificationStatus("loading");
+    if (!credentialId && !credentialIdFromParams) {
+      toast.error("Please enter a valid credential ID");
+    }
     try {
       const res = await fetch(
-        `${backendDomain}/api/credentials/${credentialId}`
+        `${backendDomain}/api/credentials/${
+          credentialId ? credentialId : credentialIdFromParams
+        }`
       );
       const data = await res.json();
 
-      console.log({ res });
       if (res.status === 200) {
         setMetadata(data);
         setOnchainData(data.onChainData);
+        setVerificationStatus("valid");
       } else {
         setErrorData(data);
+        setVerificationStatus("invalid");
       }
     } catch (err) {
       console.error(err);
+      setVerificationStatus("invalid");
     }
   };
-  console.log({ errorData });
+  console.log({ verificationStatus });
 
   useEffect(() => {
-    if (!credentialId) return;
-    if (!credentialIdFromParams) {
+    if (credentialIdFromParams && !credentialId) {
       (async () => {
         await verify();
       })();
     }
-  }, [credentialId]);
+  }, [credentialIdFromParams]);
 
-  console.log({
-    credentialId,
-    metadata,
-    credentialIdFromParams,
-    searchParams,
-  });
-
-  if (!credentialId || !metadata) {
+  if (!metadata) {
     return (
       <div className="verification-container">
         <div className="verification-input">
@@ -82,9 +77,6 @@ export function Verification() {
   return (
     <div className="recipient-container">
       <div className="recipient-credential-card">
-        <p className="go-back" onClick={() => setVerificationStatus("loading")}>
-          Go back
-        </p>
         <h1 className="verification-header">Credential</h1>
 
         {/* Verification Status */}
@@ -94,16 +86,12 @@ export function Verification() {
           } ${verificationStatus === "loading" && "loading"}
             ${verificationStatus === "invalid" && "invalid"}`}
         >
-          {verificationStatus === "loading"
-            ? "Verifying…"
-            : verificationStatus === "valid"
-            ? "VALID ✔"
-            : "INVALID ✖"}
+          {verificationStatus === "valid" ? "VALID ✔" : "INVALID ✖"}
         </div>
 
         {/* Certificate Layout */}
         <div className="certificate-view">
-          {metadata.metadata.logo && (
+          {metadata?.metadata?.logo && (
             <img
               src={metadata.metadata.logo}
               alt="Logo"
@@ -112,8 +100,9 @@ export function Verification() {
           )}
 
           <h2 className="recipient-name">
-            {metadata.metadata.fields.find((f: any) => f.id === "recipientName")
-              ?.value || "Recipient"}
+            {metadata.metadata?.fields.find(
+              (f: any) => f.id === "recipientName"
+            )?.value || "Recipient"}
           </h2>
 
           <p>
@@ -121,7 +110,7 @@ export function Verification() {
             <br />
             <strong>
               {
-                metadata.metadata.fields.find(
+                metadata.metadata?.fields.find(
                   (f: any) => f.id === "courseTitle"
                 )?.value
               }
@@ -169,6 +158,15 @@ export function Verification() {
             </p>
           </div>
         )}
+      </div>
+      <div>
+        <a
+          className="transaction-link"
+          href={`https://solscan.io/tx/${metadata.txSignature}?cluster=devnet`}
+          target="_blank"
+        >
+          Check your transaction in solscan
+        </a>
       </div>
     </div>
   );

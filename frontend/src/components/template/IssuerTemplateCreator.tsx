@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./IssuerTemplateCreator.css";
 import { backendDomain } from "../constants";
 import { toast } from "react-toastify";
+import { PreviewSection } from "./PreviewSection";
 
 type TemplateField = {
   id: string;
@@ -74,11 +75,10 @@ export function IssuerTemplateCreator() {
       required: true,
     },
   ]);
-  console.log({ fields });
 
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [newFieldType, setNewFieldType] = useState("text");
-
+  // TODO : move these to fields
   const [logo, setLogo] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
 
@@ -93,13 +93,6 @@ export function IssuerTemplateCreator() {
       });
 
     const id = newFieldLabel.toLowerCase().replace(/\s+/g, "-");
-    console.log({
-      id,
-      label: newFieldLabel,
-      type: newFieldType,
-      value: "",
-      required: false,
-    });
 
     setFields((prev) => [
       ...prev,
@@ -170,12 +163,6 @@ export function IssuerTemplateCreator() {
       toast("Error saving template", { className: "toast-red-text" });
       console.error(err);
     }
-  };
-
-  const addDays = (days: number) => {
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return date.toLocaleDateString();
   };
 
   return (
@@ -251,6 +238,7 @@ export function IssuerTemplateCreator() {
             <option value="text">Text</option>
             <option value="textarea">Textarea</option>
             <option value="date">Date</option>
+            <option value="number">Number</option>
           </select>
 
           <button className="add-field-btn" onClick={addNewField}>
@@ -288,58 +276,8 @@ export function IssuerTemplateCreator() {
           Save Template
         </button>
       </div>
-
       {/* Preview Section — unchanged */}
-      <div className="preview-section">
-        <h3>Real-time Certificate Preview</h3>
-
-        <div className="certificate">
-          {logo && <img src={logo} alt="Logo" className="certificate-logo" />}
-          <h1 className="cert-title-main">AI CERTs™</h1>
-          <p className="cert-subtext">This is to certify that</p>
-          <h2 className="cert-recipient">
-            {fields.find((f) => f.id === "recipientName")?.value ||
-              "Recipient Name"}
-          </h2>
-          <p className="cert-description">
-            Has successfully completed the requirements to be recognized as
-          </p>
-          <h2 className="cert-credential">
-            {fields.find((f) => f.id === "courseTitle")?.value ||
-              "Course Title"}
-          </h2>
-
-          <div className="signature-block">
-            {signature && (
-              <img src={signature} alt="Signature" className="signature-img" />
-            )}
-            <p className="signature-label">
-              Issued by{" "}
-              <strong>
-                {fields.find((f) => f.id === "issuerName")?.value ||
-                  "Issuer Name"}
-              </strong>
-            </p>
-          </div>
-
-          <div className="footer-row">
-            <p className="footer-fields">
-              <strong>Certification No:</strong>{" "}
-              {fields.find((f) => f.id === "score")?.value || "913bb8091533"}
-            </p>
-            <p className="footer-fields">
-              <strong>Issued On:</strong>
-              {new Date().toLocaleDateString()}
-            </p>
-            <p className="footer-fields">
-              <strong>Expires On:</strong>
-              {addDays(
-                Number(fields.find((f) => f.id === "expireInDays")?.value) || 0
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
+      <PreviewSection data={{ fields, logo, signature }} />
     </div>
   );
 }

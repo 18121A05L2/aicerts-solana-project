@@ -3,6 +3,9 @@
   justify-content: center;
   padding: 40px;
   font-family: sans-serif;
+  color: black;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .recipient-credential-card {
@@ -120,4 +123,13 @@
 .error-msg {
   color: red;
   margin-top: 50px;
+}
+
+.transaction-link {
+  color: green;
+  background: #d1fae5;
+  text-decoration: underline;
+  padding: 10px 5px;
+  border-radius: 5px;
+  cursor: pointer;
 }

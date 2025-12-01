@@ -1,6 +1,7 @@
 import { AnchorProvider, Program, web3 } from "@coral-xyz/anchor";
 import { Connection, PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
 import { sha256 } from "js-sha256";
+// @ts-ignore
 import IDL from "../idl/solana.json";
 
 const NETWORK = "https://api.devnet.solana.com";
@@ -100,12 +101,13 @@ export const verify = async (credentialId: string, metadata: any) => {
     const provider = getProvider();
     const program = getProgram(provider);
     // Fetch PDA account
+    // @ts-ignore
     const account = await program.account.credentialAccount.fetch(
       new PublicKey(credentialId!)
     );
 
     // Re-hash metadata and compare with onchain
-    const metadataString = JSON.stringify(metadata.metadata);
+    const metadataString = JSON.stringify(metadata);
     const hashHex = sha256(metadataString);
     const hashBytes = Buffer.from(hashHex, "hex");
     const matches =
@@ -117,5 +119,6 @@ export const verify = async (credentialId: string, metadata: any) => {
     }
   } catch (err) {
     console.error(err);
+    return { err };
   }
 };
