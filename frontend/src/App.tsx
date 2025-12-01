@@ -4,19 +4,34 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { IssuerTemplateCreator } from "./components/template/IssuerTemplateCreator";
 import { IssueCredential } from "./components/IssueCredential/IssueCredential";
 import { ToastContainer } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
+import "@solana/wallet-adapter-react-ui/styles.css";
+import { Navigation } from "./components/Navigation";
+import { Verification } from "./components/verification/Verification";
 
 function App() {
+  const url = new URL(window.location.href);
+  const hideHomeNaivation = url.pathname === "/";
   return (
     <Router>
       <>
+        {!hideHomeNaivation && (
+          <div className="home-button-container">
+            <a className="go-to-home" href="/">
+              Home
+            </a>
+          </div>
+        )}
+
         <Routes>
-          <Route path="/" element={<div>Vite App</div>} />
-          <Route
-            path="/IssuerTemplateCreator"
-            element={<IssuerTemplateCreator />}
-          />
+          <Route path="/" element={<Navigation />} />
+
+          <Route path="/createTemplate" element={<IssuerTemplateCreator />} />
+
           <Route path="/issueCredential" element={<IssueCredential />} />
+
+          <Route path="/verification" element={<Verification />} />
         </Routes>
 
         <ToastContainer

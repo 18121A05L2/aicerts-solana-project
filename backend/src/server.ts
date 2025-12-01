@@ -94,7 +94,7 @@ app.use(
 connectDB();
 
 app.use("/api/templates", templateRoutes);
-app.use("/api/metadata", certificateMetadata);
+app.use("/api/credentials", certificateMetadata);
 
 /******************************************************************************
                                 Export default

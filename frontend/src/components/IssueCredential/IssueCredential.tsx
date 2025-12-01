@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./IssueCredential.css";
 import { toast } from "react-toastify";
-import { backendDomain, templatesData } from "../constants";
+import { backendDomain } from "../constants";
 
 type TemplateField = {
   id: string;
@@ -25,6 +25,14 @@ export function IssueCredential() {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null
   );
+  const [credentialData, setCredentialData] = useState(
+    {} as {
+      metadata: any;
+      credentialId: string;
+      credentialHash: string;
+      txSignature: string;
+    }
+  );
 
   const [recipientWallet, setRecipientWallet] = useState("");
   const [metadata, setMetadata] = useState<any>(null);
@@ -34,9 +42,9 @@ export function IssueCredential() {
     const fetchTemplates = async () => {
       try {
         // TODO : uncomment this
-        // const res = await fetch(`${backendDomain}/api/templates`);
-        // const data = await res.json();
-        const data = templatesData;
+        const res = await fetch(`${backendDomain}/api/templates`);
+        const data = await res.json();
+        // const data = templatesData;
 
         setTemplates(data);
       } catch (err) {
@@ -88,20 +96,29 @@ export function IssueCredential() {
   };
 
   const issueCredential = async () => {
-    if (!metadata) {
-      toast.error("Generate metadata first");
-      return;
+    if (!metadata) return toast.error("Please generate metadata first");
+    // 6. Save in backend
+    try {
+      const res = await fetch(`${backendDomain}/api/credentials`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          metadata,
+          createdAt: new Date().toISOString(),
+        }),
+      });
+      if (res.status === 200) {
+        const data = await res.json();
+        setCredentialData(data);
+        toast.success("Credential stored in backend!");
+      } else {
+        const err = await res.json();
+        throw new Error(err.message);
+      }
+    } catch (err) {
+      console.log({ err });
+      toast.error(`Issuance failed: ${err?.message}`);
     }
-
-    console.log("Sending metadata to Solana program:", metadata);
-
-    // TODO: Here you call:
-    // 1. hash metadata
-    // 2. create PDA
-    // 3. send tx to Solana program
-    // 4. store txSignature + credentialID in backend
-
-    toast.error("Credential Issued on Solana (Simulation)");
   };
 
   return (
@@ -193,6 +210,15 @@ export function IssueCredential() {
         >
           Issue Credential on Solana
         </button>
+        {credentialData?.credentialId && (
+          <p>
+            <a
+              href={`/verification?credentialId=${credentialData.credentialId}`}
+            >
+              Verify Transaction Here
+            </a>
+          </p>
+        )}
       </div>
     </div>
   );

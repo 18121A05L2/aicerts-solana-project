@@ -12,3 +12,24 @@
 .toast-green-text {
   color: green !important;
 }
+
+.navigation-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.go-to-home {
+  background: #3291b6;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: min-content;
+}
+
+.home-button-container {
+  display: flex;
+  justify-content: center;
+}
