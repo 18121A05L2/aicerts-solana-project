@@ -6,7 +6,6 @@ import { IssueCredential } from "./components/IssueCredential/IssueCredential";
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-import "@solana/wallet-adapter-react-ui/styles.css";
 import { Navigation } from "./components/Navigation";
 import { Verification } from "./components/verification/Verification";
 

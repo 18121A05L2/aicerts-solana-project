@@ -2,6 +2,8 @@
 export const PreviewSection = ({ data }: any) => {
   const { fields, logo, signature } = data;
 
+  if (!fields) return <></>;
+
   const addDays = (days: number) => {
     const date = new Date();
     date.setDate(date.getDate() + days);

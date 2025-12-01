@@ -3,6 +3,28 @@ import { useEffect, useState } from "react";
 import "./IssueCredential.css";
 import { toast } from "react-toastify";
 import { backendDomain } from "../constants";
+import { PreviewSection } from "../template/PreviewSection";
+import { JsonView, darkStyles } from "react-json-view-lite";
+import "react-json-view-lite/dist/index.css";
+
+function normalizeMetadata(metadata: any) {
+  const cleanedFields = {} as any;
+
+  metadata.fields.forEach((field: any) => {
+    // only include fields with a defined value
+    if (field.value !== undefined && field.value !== null) {
+      cleanedFields[field.id] = field.value;
+    }
+  });
+
+  return {
+    templateId: metadata.templateId,
+    templateName: metadata.templateName,
+    recipientWallet: metadata.recipientWallet,
+    issuedAt: metadata.issuedAt,
+    fields: cleanedFields,
+  };
+}
 
 type TemplateField = {
   id: string;
@@ -129,102 +151,111 @@ export function IssueCredential() {
   };
 
   return (
-    <div className="issue-container">
-      {/* Left side */}
-      <div className="issue-left">
-        <h2>Issue Credential</h2>
+    <div className="issue-main">
+      <div className="issue-container">
+        {/* Left side */}
+        <div className="issue-left">
+          <h2>Issue Credential</h2>
 
-        {/* Select Template */}
-        <label className="label">Select Template</label>
-        <select
-          className="dropdown"
-          onChange={(e) => {
-            const temp = templates.find(
-              (t) => t.templateName === e.target.value
-            );
-            setSelectedTemplate(temp || null);
+          {/* Select Template */}
+          <label className="label">Select Template</label>
+          <select
+            className="dropdown"
+            onChange={(e) => {
+              const temp = templates.find(
+                (t) => t.templateName === e.target.value
+              );
+              setSelectedTemplate(temp || null);
 
-            setMetadata(null);
-          }}
-        >
-          <option value="">-- Select Template --</option>
-          {templates.map((t) => (
-            <option key={t._id?.$oid} value={t.templateName}>
-              {t.templateName}
-            </option>
-          ))}
-        </select>
+              setMetadata(null);
+            }}
+          >
+            <option value="">-- Select Template --</option>
+            {templates.map((t) => (
+              <option key={t._id?.$oid} value={t.templateName}>
+                {t.templateName}
+              </option>
+            ))}
+          </select>
 
-        {/* Recipient Wallet */}
-        <div className="input-row">
-          <label>Recipient Wallet Address</label>
-          <input
-            type="text"
-            className="input-box"
-            placeholder="Enter Solana wallet address"
-            value={recipientWallet}
-            onChange={(e) => setRecipientWallet(e.target.value)}
-          />
+          {/* Recipient Wallet */}
+          <div className="input-row">
+            <label>Recipient Wallet Address</label>
+            <input
+              type="text"
+              className="input-box"
+              placeholder="Enter Solana wallet address"
+              value={recipientWallet}
+              onChange={(e) => setRecipientWallet(e.target.value)}
+            />
+          </div>
+
+          {/* Fields */}
+          {selectedTemplate && (
+            <div className="fields-area">
+              <h4>Fill Credential Details</h4>
+
+              {selectedTemplate.fields.map((field) =>
+                field.type === "readonly" ? (
+                  <></>
+                ) : (
+                  <div key={field.id} className="input-row">
+                    <label>{field.label}</label>
+                    <input
+                      type={field.type ?? "text"}
+                      className="input-box"
+                      placeholder={field.label}
+                      //   value={fieldValues[field.id] || ""}
+                      onChange={(e) =>
+                        handleFieldChange(field.id, e.target.value)
+                      }
+                    />
+                  </div>
+                )
+              )}
+
+              <button className="generate-btn" onClick={generateMetadata}>
+                Generate Metadata
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Fields */}
-        {selectedTemplate && (
-          <div className="fields-area">
-            <h4>Fill Credential Details</h4>
+        {/* Right side */}
+        <div className="issue-right">
+          <PreviewSection
+            data={{
+              fields: selectedTemplate?.fields,
+              logo: selectedTemplate?.logo,
+              signature: selectedTemplate?.signature,
+            }}
+          />
 
-            {selectedTemplate.fields.map((field) =>
-              field.type === "readonly" ? (
-                <></>
-              ) : (
-                <div key={field.id} className="input-row">
-                  <label>{field.label}</label>
-                  <input
-                    type={field.type ?? "text"}
-                    className="input-box"
-                    placeholder={field.label}
-                    //   value={fieldValues[field.id] || ""}
-                    onChange={(e) =>
-                      handleFieldChange(field.id, e.target.value)
-                    }
-                  />
-                </div>
-              )
-            )}
-
-            <button className="generate-btn" onClick={generateMetadata}>
-              Generate Metadata
-            </button>
-          </div>
-        )}
+          <button
+            className="issue-btn"
+            disabled={!metadata}
+            onClick={issueCredential}
+          >
+            {isLoading ? "Issuing..." : "   Issue Credential on Solana"}
+          </button>
+          {credentialData?.credentialId && (
+            <p>
+              <a
+                href={`/verification?credentialId=${credentialData.credentialId}`}
+              >
+                Verify Transaction Here
+              </a>
+            </p>
+          )}
+        </div>
       </div>
-
-      {/* Right side */}
-      <div className="issue-right">
-        <h3>Metadata Preview</h3>
+      <div className="metadata-container">
+        <h3 className="metadata-title">Metadata Preview</h3>
 
         {!metadata && <p className="placeholder">Metadata will appear here…</p>}
 
         {metadata && (
-          <pre className="metadata-box">
-            {JSON.stringify(metadata, null, 2)}
-          </pre>
-        )}
-
-        <button
-          className="issue-btn"
-          disabled={!metadata}
-          onClick={issueCredential}
-        >
-          {isLoading ? "Issuing..." : "   Issue Credential on Solana"}
-        </button>
-        {credentialData?.credentialId && (
-          <p>
-            <a
-              href={`/verification?credentialId=${credentialData.credentialId}`}
-            >
-              Verify Transaction Here
-            </a>
-          </p>
+          <JsonView data={normalizeMetadata(metadata)} style={darkStyles} />
         )}
       </div>
     </div>

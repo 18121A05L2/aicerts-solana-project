@@ -1,15 +1,23 @@
+import "./navigation.css";
+
 export function Navigation() {
   return (
-    <div className="navigation-container">
-      <ul>
+    <div className="nav-wrapper">
+      <ul className="nav-list">
         <li>
-          <a href="/createTemplate">Create Template</a>
+          <a className="nav-link" href="/createTemplate">
+            Create Template
+          </a>
         </li>
         <li>
-          <a href="/issueCredential">Issue Credential</a>
+          <a className="nav-link" href="/issueCredential">
+            Issue Credential
+          </a>
         </li>
         <li>
-          <a href="/verification">Verification</a>
+          <a className="nav-link" href="/verification">
+            Verification
+          </a>
         </li>
       </ul>
     </div>

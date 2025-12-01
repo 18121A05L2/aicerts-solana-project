@@ -1,0 +1,45 @@
+/* Navigation Wrapper */
+.nav-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 20px 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 30px;
+}
+
+/* UL styling */
+.nav-list {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Link styling */
+.nav-link {
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #334155; /* slate-700 */
+  padding: 10px 18px;
+  border-radius: 10px;
+  transition: 0.25s ease;
+}
+
+/* Hover effect */
+.nav-link:hover {
+  background: #eef2ff; /* indigo-100 */
+  color: #4338ca; /* indigo-700 */
+  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Active effect (on click) */
+.nav-link:active {
+  transform: scale(0.96);
+}

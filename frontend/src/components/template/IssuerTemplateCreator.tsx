@@ -182,7 +182,7 @@ export function IssuerTemplateCreator() {
           />
         </div>
 
-        <h4>Add/Edit Fields</h4>
+        <h4 className="required-fields">Add / Edit fields</h4>
 
         {/* Existing Fields */}
         <div className="field-list">
