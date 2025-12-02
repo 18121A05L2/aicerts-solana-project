@@ -80,7 +80,12 @@ export function RecipientDashboard() {
         {results.map((cred) => (
           <div key={cred.credentialId} className="credential-card">
             <div className="credential-header">
-              <h3 className="credential-title">{cred.metadata.templateName}</h3>
+              <h3 className="credential-title">
+                {
+                  cred.metadata.fields.find((f: any) => f.id === "issuerName")
+                    ?.value
+                }
+              </h3>
               <button
                 className="share-btn"
                 onClick={() => copyShareLink(cred.credentialId)}
