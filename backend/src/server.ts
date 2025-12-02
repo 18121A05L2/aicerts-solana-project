@@ -16,6 +16,7 @@ import { configDotenv } from "dotenv";
 import connectDB from "./config/mongo";
 import { templateRoutes } from "./routes/template";
 import { certificateMetadata } from "./routes/certificateMetadata";
+import "module-alias/register";
 
 /******************************************************************************
                                 Setup

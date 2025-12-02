@@ -65,7 +65,7 @@ export const PreviewSection = ({ data }: any) => {
           </p>
         </div>
         <div className="issuer-key">
-          Signed with : {""}
+          Issued with : {""}
           {fields.find((f: any) => f.id === "issuerPublicKey")?.value ||
             "Issuer Public Key"}
         </div>

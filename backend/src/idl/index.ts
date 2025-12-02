@@ -15,7 +15,7 @@ function getProvider() {
   // ---- Load issuer wallet (backend signer) ----
   if (!ISSUER_KEYPAIR) {
     ISSUER_KEYPAIR = Keypair.fromSecretKey(
-      Uint8Array.from(JSON.parse(process.env.ISSUER_SECRET_KEY!))
+      Uint8Array.from(JSON.parse(process.env.ADMIN_SECRET_KEY!))
     );
   }
 

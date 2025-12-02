@@ -9,8 +9,8 @@ import {
 const certificateMetadata = Router();
 
 certificateMetadata.post("/", createMetadata);
+certificateMetadata.post("/by-name", getOwnerSpecificMetaData);
 certificateMetadata.get("/verify/:credentialId", getVerifiedMetaData);
 certificateMetadata.get("/", getAllMetaData);
-certificateMetadata.post("/by-name", getOwnerSpecificMetaData);
 
 export { certificateMetadata };

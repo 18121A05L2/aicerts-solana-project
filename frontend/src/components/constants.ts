@@ -1,4 +1,4 @@
-export const backendDomain = "http://localhost:3001";
+export const backendDomain = import.meta.env.VITE_BACKEND_URL;
 
 export const templatesData = [
   {

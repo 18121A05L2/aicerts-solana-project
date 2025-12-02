@@ -4,12 +4,12 @@
     "module": "CommonJS",
     "lib": ["ES2020"],
     "strict": true,
-    "baseUrl": "./",
+    "baseUrl": "src",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": ["*"]
     },
     "useUnknownInCatchVariables": false,
     "types": ["vitest/globals"],
