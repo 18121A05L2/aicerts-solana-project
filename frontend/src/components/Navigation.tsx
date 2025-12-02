@@ -15,13 +15,13 @@ export function Navigation() {
           </a>
         </li>
         <li>
-          <a className="nav-link" href="/verification">
-            Verification
+          <a className="nav-link" href="/recipientView">
+            Recipient View
           </a>
         </li>
         <li>
-          <a className="nav-link" href="/recipientView">
-            Recipient View
+          <a className="nav-link" href="/verification">
+            Verification
           </a>
         </li>
       </ul>

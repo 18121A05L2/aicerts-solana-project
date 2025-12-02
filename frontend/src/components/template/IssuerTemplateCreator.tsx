@@ -81,6 +81,7 @@ export function IssuerTemplateCreator() {
   // TODO : move these to fields
   const [logo, setLogo] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
+  const [isSavingTemplate, setIsSavingTemplate] = useState(false);
 
   const handleFieldChange = (id: string, value: string) => {
     setFields((prev) => prev.map((f) => (f.id === id ? { ...f, value } : f)));
@@ -130,6 +131,7 @@ export function IssuerTemplateCreator() {
       toast("Template name is required", { className: "toast-red-text" });
       return;
     }
+    setIsSavingTemplate(true);
 
     const payload = {
       templateName,
@@ -164,6 +166,8 @@ export function IssuerTemplateCreator() {
     } catch (err) {
       toast("Error saving template", { className: "toast-red-text" });
       console.error(err);
+    } finally {
+      setIsSavingTemplate(false);
     }
   };
 
@@ -270,8 +274,12 @@ export function IssuerTemplateCreator() {
         </div>
 
         {/* Save Template */}
-        <button className="save-template-btn" onClick={saveTemplate}>
-          Save Template
+        <button
+          className="save-template-btn"
+          onClick={saveTemplate}
+          disabled={isSavingTemplate}
+        >
+          {isSavingTemplate ? "Saving..." : "Save Template"}
         </button>
       </div>
       {/* Preview Section — unchanged */}

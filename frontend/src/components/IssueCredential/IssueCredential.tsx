@@ -225,7 +225,7 @@ export function IssueCredential() {
 
           <button
             className="issue-btn"
-            disabled={!metadata}
+            disabled={!metadata || isLoading}
             onClick={issueCredential}
           >
             {isLoading ? "Issuing..." : "   Issue Credential on Solana"}
