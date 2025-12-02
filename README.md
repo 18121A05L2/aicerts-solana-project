@@ -1,5 +1,105 @@
 # AICerts — Solana-Based Credential Issuance Platform
 
+A decentralized credential management system built on Solana blockchain that enables secure issuance, storage, and verification of digital certificates.
+
+## 📋 Table of Contents
+
+- [Overview](#-overview)
+- [Architecture](#-architecture)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Features](#features)
+- [API Documentation](#-api-documentation)
+- [Solana Program](#solana-program)
+- [Demo](#-demo)
+
+## 🎯 Overview
+
+AICerts is a hybrid on-chain/off-chain credential issuance platform that leverages Solana's blockchain for immutable proof storage while maintaining cost efficiency by storing detailed metadata off-chain in MongoDB.
+
+**Live Website**: [https://frontend-aicerts-solana-project.vercel.app/](https://frontend-aicerts-solana-project.vercel.app/)
+
+**Smart Contract Address**: `EtcxZLVKnZBwHsMgFt8kuAZ3eenMgcZi5YWSNGmJYxDA`
+
+## 🏗 Architecture
+
+### Hybrid Design Philosophy
+
+**On-Chain Storage (Solana PDA)**
+
+- Credential hash (32 bytes)
+- Owner public key
+- Credential ID (PDA public key)
+
+**Off-Chain Storage (MongoDB)**
+
+- Complete metadata JSON
+- Template ID
+- Logo & signature (base64/URL)
+- Transaction signature
+- Issuer public key
+- Issue date & expiry
+- Shareable link
+
+### Why Hybrid?
+
+- ✅ Cost-effective (on-chain storage is expensive)
+- ✅ Immutable proof on blockchain
+- ✅ Flexible metadata management
+- ✅ Efficient verification via hash comparison
+
+### System Flow
+
+```
+┌───────────────────────┐
+│   Issuer Dashboard    │
+│ (Create Templates)    │
+└───────────┬───────────┘
+            │
+            │ POST Template
+            ▼
+┌───────────────────────────┐
+│ Backend (Express + Mongo) │
+│ Store Templates/Metadata  │
+└───────────┬───────────────┘
+            │
+            │ Issue Credential
+            ▼
+┌───────────────────────────┐
+│ Backend Solana Service    │
+│ • Hash metadata           │
+│ • Derive PDA              │
+│ • Submit transaction      │
+└──────────┬────────────────┘
+           │
+           ▼
+┌──────────────────────┐
+│  Solana Blockchain   │
+│ Store hash + owner   │
+└──────────┬───────────┘
+           │
+           │ Verification
+           ▼
+┌──────────────────────┐
+│  Recipient View UI   │
+│ Verify credentials   │
+└──────────────────────┘
+```
+
+## 🛠 Tech Stack
+
+| Layer                     | Technology                |
+| ------------------------- | ------------------------- |
+| Frontend                  | React + Vite + TypeScript |
+| Backend                   | Node.js + Express.js      |
+| Database                  | MongoDB (Mongoose)        |
+| Blockchain                | Solana + Anchor Framework |
+| Hashing                   | SHA-256 (js-sha256)       |
+| Wallet Integration        | Phantom / Solana Web3.js  |
+| Smart Contract Deployment | Solana Devnet             |
+| Application Deployment    | Vercel                    |
+
 ## FrontEnd ( React + TypeScript)
 
 - Init :: npm create vite@latest frontend
@@ -49,190 +149,256 @@ npm run dev:hot
   - /api/credentials/by-name - POST call to fetch credentials based on Recipient Name
   - /api/credentials/verify/:credentialId - GET call to verify the certificateId/credentialId issued on solana
 
-# Important things to Refer
+## 📁 Project Structure
 
-- [project structure](#project-structure)
-- [Architecture](#-system-architecture-documentation)
-- [Flows on white board](#flows-on-excalidraw)
-
-## Refer Frontend Pages Here
-
-### Issuer Dashboard
-
-- Create custom templates
-
-- Add/edit/delete fields
-
-- Upload logo & signature
-
-- Real-time certificate preview
-
-- Save templates to MongoDB
-
-![Ai Certs Solana project](images/AiCerts/screencapture-localhost-5173-createTemplate-2025-12-02-14_34_08.png)
-
-### Issue Credential Screen
-
-- Select template
-
-- Fill credential fields
-
-- Enter Issuer wallet
-
-- Backend hashes metadata
-
-- PDA generated using Solana program ( metadata hash + issuer pubkey )
-
-- Only hash + owner stored on-chain
-
-- Metadata stored off-chain
-
-![Ai Certs Solana project](images/AiCerts/screencapture-localhost-5173-issueCredential-2025-12-02-12_01_27.png)
-
-### Recipient View
-
-- View all credentail certificates
-
-- Display certificate in styled layout
-
-- Shareable credential link
-
-![Ai Certs Solana project](images/AiCerts/screencapture-localhost-5173-recipientView-2025-12-02-12_09_58.png)
-
-### Verification Flow
-
-- Enter credential ID
-
-- Fetch PDA from blockchain
-
-- Fetch stored metadata from backend
-
-- Compare hashes → VALID / INVALID
-
-![Ai Certs Solana project](images/AiCerts/screencapture-localhost-5173-verification-2025-12-02-12_10_24.png)
-
-| Layer                             | Technology                |
-| --------------------------------- | ------------------------- |
-| Frontend                          | React + Vite + TypeScript |
-| Backend                           | Node.js + Express.js      |
-| Database                          | MongoDB (Mongoose)        |
-| Blockchain                        | Solana + Anchor           |
-| Hashing                           | SHA-256 (js-sha256)       |
-| Wallet                            | Phantom / Solana Web3.js  |
-| Deployment ( smart contracts)     | Devnet cluster            |
-| Deployment ( frontend , backend ) | vercel                    |
-
-# Project Structure
-
-```bash
+```
 aicerts-solana-project/
 │
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   └── solanaService.ts
+│   │   ├── controllers/      # Request handlers
+│   │   ├── models/            # MongoDB schemas
+│   │   ├── routes/            # API routes
+│   │   ├── services/          # Business logic
 │   ├── .env
 │   └── package.json
 │
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── idl/solana.json
-│   │   └── utils/
+│   │   ├── components/        # Reusable UI components
+│   │   ├── pages/             # Application pages
+│   │   ├── idl/solana.json    # Program interface
+│   │   └── utils/             # Helper functions
 │   └── package.json
 │
 └── programs/
     └── solana/
-        ├── src/lib.rs
+        ├── src/lib.rs         # Solana program code
         ├── Cargo.toml
         └── Anchor.toml
 ```
 
-### 🟦 SYSTEM ARCHITECTURE DOCUMENTATION
+## 🚀 Getting Started
 
-🧱 Architecture Overview
+### Prerequisites
 
-This platform follows a hybrid on-chain + off-chain design:
+- Node.js (v16 or higher)
+- Solana CLI
+- Anchor Framework
+- MongoDB
+- Phantom Wallet
 
-✔ On-Chain (Minimal storage)
-
-Stored inside a PDA account:
-
-credentialHash → 32 bytes
-
-ownerPublicKey → credential owner
-
-(Implicit) credentialId → PDA public key
-
-✔ Off-Chain (MongoDB)
-
-Stored in backend:
-
-Full metadata JSON
-
-templateId
-
-logo & signature (base64 or URL)
-
-txSignature
-
-issuerPublicKey
-
-issueDate / expiry
-
-link
-
-✔ Why hybrid?
-
-On-chain storage is expensive
-
-Only proof must be immutable
-
-Metadata changes frequently
-
-Verification requires hash comparison
-
-🗺️ End-to-End Architecture Diagram
+### Frontend Setup
 
 ```bash
-                       ┌───────────────────────┐
-                       │   Issuer Dashboard    │
-                       │ (React + Template UI) │
-                       └───────────┬───────────┘
-                                   │
-                                   │ POST Template
-                                   ▼
-                      ┌───────────────────────────┐
-                      │ Backend (Express + Mongo) │
-                      │ Saves Templates / Metadata│
-                      └───────────┬───────────────┘
-                                  │
-                                  │ Issue Credential
-                                  ▼
-                      ┌───────────────────────────┐
-                      │ Backend Solana Service    │
-                      │ - hash metadata           │
-                      │ - derive PDA              │
-                      │ - send tx on-chain        │
-                      └──────────┬────────────────┘
-                                 │
-                                 ▼
-                       ┌──────────────────────┐
-                       │   Solana Blockchain  │
-                       │ Stores hash + owner  │
-                       └──────────┬───────────┘
-                                  │
-                   GET Credential ▼
-                       ┌──────────────────────┐
-                       │  Recipient View UI   │
-                       │ Verifies on-chain    │
-                       └──────────────────────┘
+cd frontend
+npm install
+npm run dev
 ```
 
-## Flows on excalidraw
+The application will be available at `http://localhost:5173`
 
-![architecture.excalidraw](images/Untitled-2025-07-13-1128.png)
+### Backend Setup
+
+```bash
+cd backend
+npm install
+npm run dev:hot
+```
+
+The API server will start on the configured port.
+
+### Solana Program
+
+```bash
+cd programs/solana
+anchor build
+```
+
+The compiled IDL will be available at `target/idl/solana.json`
+
+## Features
+
+### 1. Issuer Dashboard
+
+**Route**: `/createTemplate`
+
+Create custom certificate templates with:
+
+- Dynamic field management (add/edit/delete)
+- Logo and signature upload
+- Real-time certificate preview
+- Template persistence to MongoDB
+
+![Issuer Dashboard](images/AiCerts/screencapture-localhost-5173-createTemplate-2025-12-02-14_34_08.png)
+
+### 2. Issue Credential Screen
+
+**Route**: `/issueCredential`
+
+Issue credentials with the following workflow:
+
+- Select from existing templates
+- Fill credential-specific fields
+- Connect issuer wallet
+- Backend generates metadata hash
+- PDA derived using: `[metadata_hash + issuer_pubkey]`
+- Hash and owner stored on-chain
+- Complete metadata stored off-chain
+
+![Issue Credential](images/AiCerts/screencapture-localhost-5173-issueCredential-2025-12-02-12_01_27.png)
+
+### 3. Recipient View
+
+**Route**: `/recipientView`
+
+Recipients can:
+
+- View all issued credentials
+- Display certificates in styled format
+- Generate shareable credential links
+
+![Recipient View](images/AiCerts/screencapture-localhost-5173-recipientView-2025-12-02-12_09_58.png)
+
+### 4. Verification Flow
+
+**Route**: `/verification`
+
+Verify credentials through:
+
+1. Enter credential ID
+2. Fetch PDA account from blockchain
+3. Retrieve stored metadata from backend
+4. Compare hashes
+5. Display result: **VALID** or **INVALID**
+
+![Verification](images/AiCerts/screencapture-localhost-5173-verification-2025-12-02-12_10_24.png)
+
+## 📡 API Documentation
+
+### Templates
+
+**Create Template**
+
+```http
+POST /api/templates
+Content-Type: application/json
+
+{
+  "name": "Template Name",
+  "fields": [...],
+  "logo": "base64_string",
+  "signature": "base64_string"
+}
+```
+
+**Get All Templates**
+
+```http
+GET /api/templates
+```
+
+### Credentials
+
+**Store Credential Metadata**
+
+```http
+POST /api/credentials
+Content-Type: application/json
+
+{
+  "templateId": "...",
+  "metadata": {...},
+  "issuerPublicKey": "...",
+  "txSignature": "..."
+}
+```
+
+**Get All Credentials**
+
+```http
+GET /api/credentials
+```
+
+**Get Credentials by Recipient Name**
+
+```http
+POST /api/credentials/by-name
+Content-Type: application/json
+
+{
+  "recipientName": "John Doe"
+}
+```
+
+**Verify Credential**
+
+```http
+GET /api/credentials/verify/:credentialId
+```
+
+## ⚡ Solana Program
+
+### Program Details
+
+**Program ID**: `EtcxZLVKnZBwHsMgFt8kuAZ3eenMgcZi5YWSNGmJYxDA`
+
+**Instruction**: `createCredential`
+
+**Purpose**: Store credential hash and owner in a Program Derived Address (PDA)
+
+### PDA Generation
+
+**Seeds**: `["credential", owner_pubkey, credential_hash]`
+
+**Stored Fields**:
+
+```rust
+pub struct Credential {
+    pub credential_hash: [u8; 32],
+    pub owner: Pubkey,
+}
+```
+
+**Returned Value**: PDA public key serves as the `credentialId`
+
+### Frontend-Blockchain Interaction
+
+#### Issuance Flow (Backend)
+
+1. Receive metadata JSON
+2. Generate hash: `sha256(JSON.stringify(metadata))`
+3. Derive PDA using seeds
+4. Call `createCredential` instruction
+5. Store metadata in MongoDB
+6. Return `credentialId` to frontend
+
+#### Verification Flow (Frontend)
+
+1. Fetch metadata from backend API
+2. Fetch PDA account from Solana
+3. Hash the retrieved metadata
+4. Compare with `account.credentialHash`
+5. Result: **VALID** (if equal) or **INVALID** (if different)
+
+## 🎥 Demo
+
+Watch the full platform demonstration: [Demo Video](https://1drv.ms/v/s!Au0SRHW_UhEQgQHQ5ZoYtAWdnqhm?e=FcTw9m)
+
+## 📝 Additional Resources
+
+- [System Architecture Diagram](images/Untitled-2025-07-13-1128.png)
+- [Anchor Framework Documentation](https://www.anchor-lang.com/)
+- [Solana Documentation](https://docs.solana.com/)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+---
+
+Built with ❤️ using Solana, React, and Node.js
