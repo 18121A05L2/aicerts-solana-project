@@ -53,6 +53,7 @@ npm run dev:hot
 
 - [project structure](#project-structure)
 - [Architecture](#-system-architecture-documentation)
+- [Flows on white board](#flows-on-excalidraw)
 
 ## Refer Frontend Pages Here
 
@@ -231,3 +232,7 @@ Verification requires hash comparison
                        │ Verifies on-chain    │
                        └──────────────────────┘
 ```
+
+## Flows on excalidraw
+
+![architecture.excalidraw](images/Untitled-2025-07-13-1128.png)

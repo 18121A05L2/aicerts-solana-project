@@ -17,6 +17,7 @@ import connectDB from "./config/mongo";
 import { templateRoutes } from "./routes/template";
 import { certificateMetadata } from "./routes/certificateMetadata";
 import "module-alias/register";
+import "tsconfig-paths/register";
 
 /******************************************************************************
                                 Setup

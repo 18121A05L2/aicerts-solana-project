@@ -1,8 +1,8 @@
 import { AnchorProvider, Program, web3 } from "@coral-xyz/anchor";
 import { Connection, PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
 import { sha256 } from "js-sha256";
+import { IDL } from "./idl";
 // @ts-ignore
-import IDL from "../idl/solana.json";
 
 const NETWORK = "https://api.devnet.solana.com";
 const PROGRAM_ID = new PublicKey(IDL.address);
