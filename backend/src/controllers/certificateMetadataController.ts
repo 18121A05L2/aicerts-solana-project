@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import CertificateMetadata from "../models/CertificateMetadata";
-import { issueCredential, verify } from "@src/idl";
+import { issueCredential, verify } from "../idl";
 
 export const createMetadata = async (req: Request, res: Response) => {
   try {

@@ -5,13 +5,13 @@ import express, { Request, Response, NextFunction } from "express";
 import logger from "jet-logger";
 import cors from "cors";
 
-import BaseRouter from "@src/routes";
+import BaseRouter from "./routes";
 
-import Paths from "@src/common/constants/Paths";
-import ENV from "@src/common/constants/ENV";
-import HttpStatusCodes from "@src/common/constants/HttpStatusCodes";
-import { RouteError } from "@src/common/util/route-errors";
-import { NodeEnvs } from "@src/common/constants";
+import Paths from "./common/constants/Paths";
+import ENV from "./common/constants/ENV";
+import HttpStatusCodes from "./common/constants/HttpStatusCodes";
+import { RouteError } from "./common/util/route-errors";
+import { NodeEnvs } from "./common/constants";
 import { configDotenv } from "dotenv";
 import connectDB from "./config/mongo";
 import { templateRoutes } from "./routes/template";

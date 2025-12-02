@@ -24,6 +24,7 @@ export function Verification() {
   const verify = async () => {
     if (!credentialId && !credentialIdFromParams) {
       toast.error("Please enter a valid credential ID");
+      return;
     }
     setVerificationStatus("loading");
     try {
