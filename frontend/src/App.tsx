@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Navigation } from "./components/Navigation";
 import { Verification } from "./components/verification/Verification";
+import { RecipientDashboard } from "./components/Recipient/RecipientView";
 
 function App() {
   const url = new URL(window.location.href);
@@ -31,6 +32,8 @@ function App() {
           <Route path="/issueCredential" element={<IssueCredential />} />
 
           <Route path="/verification" element={<Verification />} />
+
+          <Route path="/recipientView" element={<RecipientDashboard />} />
         </Routes>
 
         <ToastContainer

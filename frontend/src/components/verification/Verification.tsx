@@ -25,9 +25,10 @@ export function Verification() {
     if (!credentialId && !credentialIdFromParams) {
       toast.error("Please enter a valid credential ID");
     }
+    setVerificationStatus("loading");
     try {
       const res = await fetch(
-        `${backendDomain}/api/credentials/${
+        `${backendDomain}/api/credentials/verify/${
           credentialId ? credentialId : credentialIdFromParams
         }`
       );
@@ -46,7 +47,6 @@ export function Verification() {
       setVerificationStatus("invalid");
     }
   };
-  console.log({ verificationStatus });
 
   useEffect(() => {
     if (credentialIdFromParams && !credentialId) {
@@ -55,6 +55,10 @@ export function Verification() {
       })();
     }
   }, [credentialIdFromParams]);
+
+  if (verificationStatus === "loading") {
+    return <div className="verification-loader"></div>;
+  }
 
   if (!metadata) {
     return (

@@ -1,0 +1,102 @@
+.recipient-page-container {
+  padding: 40px;
+  max-width: 900px;
+  margin: auto;
+  font-family: sans-serif;
+}
+
+.recipient-page-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.search-box-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.wallet-input {
+  width: 420px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  font-size: 16px;
+}
+
+.search-btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.search-btn:hover {
+  background: #1e4ed8;
+}
+
+.loading-text {
+  text-align: center;
+  margin-top: 20px;
+  color: #444;
+}
+
+.no-results {
+  text-align: center;
+  margin-top: 20px;
+  color: #777;
+}
+
+.credentials-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card styling */
+.credential-card {
+  border: 2px solid #ddd;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.credential-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.credential-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.share-btn {
+  background: #10b981;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+.share-btn:hover {
+  background: #059669;
+}
+
+.credential-preview p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.credential-preview a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2563eb;
+}

@@ -31,6 +31,10 @@ body {
   margin: 0;
   padding: 0;
   background: #f3f0ff;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
 /* Input text color */
@@ -118,10 +122,4 @@ select:focus {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
-}
-
-/* ---------- Global Smooth UI Transitions ---------- */
-
-* {
-  transition: background 0.2s, border 0.2s, color 0.2s, box-shadow 0.2s;
 }

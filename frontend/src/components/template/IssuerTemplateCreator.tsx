@@ -47,6 +47,13 @@ export function IssuerTemplateCreator() {
 
     // Preview-only fields
     {
+      id: "issuerPublicKey",
+      label: "Issuer Public Key*",
+      type: "text",
+      value: "",
+      required: true,
+    },
+    {
       id: "issueDate",
       label: "Issue Date*",
       type: "readonly",
@@ -56,13 +63,6 @@ export function IssuerTemplateCreator() {
     {
       id: "txSignature",
       label: "Tx Signature*",
-      type: "readonly",
-      value: "{auto}",
-      required: true,
-    },
-    {
-      id: "issuerPublicKey",
-      label: "Issuer Public Key*",
       type: "readonly",
       value: "{auto}",
       required: true,
@@ -159,6 +159,8 @@ export function IssuerTemplateCreator() {
           })
           .filter((f) => f.required);
       });
+      setLogo(null);
+      setSignature(null);
     } catch (err) {
       toast("Error saving template", { className: "toast-red-text" });
       console.error(err);
@@ -268,11 +270,7 @@ export function IssuerTemplateCreator() {
         </div>
 
         {/* Save Template */}
-        <button
-          className="save-template-btn"
-          // disabled={!templateName || !name || !course || !expiredOn}
-          onClick={saveTemplate}
-        >
+        <button className="save-template-btn" onClick={saveTemplate}>
           Save Template
         </button>
       </div>

@@ -14,7 +14,7 @@ pub mod credential_program {
         let account = &mut ctx.accounts.credential_account;
 
         account.credential_hash = credential_hash;
-        account.owner = ctx.accounts.owner.key(); // recipient of credential
+        account.owner = ctx.accounts.owner.key(); // issuer credential
 
         Ok(())
     }
@@ -29,7 +29,7 @@ pub struct CreateCredential<'info> {
         space = CredentialAccount::space(),
         seeds = [
             b"credential",
-            owner.key().as_ref(),      // recipient pubkey
+            owner.key().as_ref(),      // issuer pubkey
             credential_hash.as_ref()   // unique hash
         ],
         bump
@@ -40,7 +40,7 @@ pub struct CreateCredential<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    /// This is the owner of the credential (recipient)
+    /// This issuer of the credential (issuer)
     pub owner: SystemAccount<'info>,
 
     pub system_program: Program<'info, System>,

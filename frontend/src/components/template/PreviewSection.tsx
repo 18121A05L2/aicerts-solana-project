@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const PreviewSection = ({ data }: any) => {
-  const { fields, logo, signature } = data;
+  const { fields, logo, signature, credentialId } = data;
 
   if (!fields) return <></>;
 
@@ -15,7 +15,12 @@ export const PreviewSection = ({ data }: any) => {
 
       <div className="certificate">
         {logo && <img src={logo} alt="Logo" className="certificate-logo" />}
-        <h1 className="cert-title-main">AI CERTs™</h1>
+        <h1 className="cert-title-main">
+          {" "}
+          {fields.find((f: any) => f.id === "issuerName")?.value ||
+            "Issuer Name"}
+          ™
+        </h1>
         <p className="cert-subtext">This is to certify that</p>
         <h2 className="cert-recipient">
           {fields.find((f: any) => f.id === "recipientName")?.value ||
@@ -45,7 +50,7 @@ export const PreviewSection = ({ data }: any) => {
         <div className="footer-row">
           <p className="footer-fields">
             <strong>Certification No:</strong>{" "}
-            {fields.find((f: any) => f.id === "score")?.value || "913bb8091533"}
+            {credentialId?.slice(0, 20) || "913bb8091533"}
           </p>
           <p className="footer-fields">
             <strong>Issued On:</strong>
@@ -58,6 +63,11 @@ export const PreviewSection = ({ data }: any) => {
                 0
             )}
           </p>
+        </div>
+        <div className="issuer-key">
+          Signed with : {""}
+          {fields.find((f: any) => f.id === "issuerPublicKey")?.value ||
+            "Issuer Public Key"}
         </div>
       </div>
     </div>

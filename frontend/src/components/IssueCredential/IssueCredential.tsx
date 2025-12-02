@@ -6,6 +6,7 @@ import { backendDomain } from "../constants";
 import { PreviewSection } from "../template/PreviewSection";
 import { JsonView, darkStyles } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
+import { isValidSolanaPublicKey } from "../utils/validation";
 
 function normalizeMetadata(metadata: any) {
   const cleanedFields = {} as any;
@@ -20,7 +21,6 @@ function normalizeMetadata(metadata: any) {
   return {
     templateId: metadata.templateId,
     templateName: metadata.templateName,
-    recipientWallet: metadata.recipientWallet,
     issuedAt: metadata.issuedAt,
     fields: cleanedFields,
   };
@@ -58,7 +58,6 @@ export function IssueCredential() {
   );
   const [isLoading, setIsLoading] = useState(false);
 
-  const [recipientWallet, setRecipientWallet] = useState("");
   const [metadata, setMetadata] = useState<any>(null);
 
   // Fetch templates from backend
@@ -95,12 +94,17 @@ export function IssueCredential() {
   // Generate metadata to be hashed + submitted to Solana
   const generateMetadata = () => {
     if (!selectedTemplate) return toast.error("Please select a template");
-    if (!recipientWallet.trim())
-      return toast.error("Recipient wallet required");
 
     const isEmptyData = selectedTemplate.fields.some(
       (field) => field.type !== "readonly" && !field.value
     );
+    const isValidSolanaAddress = isValidSolanaPublicKey(
+      selectedTemplate.fields.find((field) => field.id === "issuerPublicKey")
+        ?.value ?? ""
+    );
+    if (!isValidSolanaAddress) {
+      return toast.error("Please enter a valid Solana address");
+    }
     if (isEmptyData) {
       return toast.error("All fields are required");
     }
@@ -108,7 +112,6 @@ export function IssueCredential() {
     const metadataObj = {
       templateId: selectedTemplate._id,
       templateName: selectedTemplate.templateName,
-      recipientWallet,
       fields: selectedTemplate.fields,
       ...(selectedTemplate.logo && { logo: selectedTemplate.logo }),
       ...(selectedTemplate.signature && {
@@ -178,18 +181,6 @@ export function IssueCredential() {
             ))}
           </select>
 
-          {/* Recipient Wallet */}
-          <div className="input-row">
-            <label>Recipient Wallet Address</label>
-            <input
-              type="text"
-              className="input-box"
-              placeholder="Enter Solana wallet address"
-              value={recipientWallet}
-              onChange={(e) => setRecipientWallet(e.target.value)}
-            />
-          </div>
-
           {/* Fields */}
           {selectedTemplate && (
             <div className="fields-area">
@@ -228,6 +219,7 @@ export function IssueCredential() {
               fields: selectedTemplate?.fields,
               logo: selectedTemplate?.logo,
               signature: selectedTemplate?.signature,
+              credentialId: credentialData.credentialId,
             }}
           />
 
@@ -242,6 +234,7 @@ export function IssueCredential() {
             <p>
               <a
                 href={`/verification?credentialId=${credentialData.credentialId}`}
+                target="_blank"
               >
                 Verify Transaction Here
               </a>

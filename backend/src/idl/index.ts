@@ -54,8 +54,12 @@ export async function issueCredential(metadata: any) {
     const hashBytes = Buffer.from(hashHex, "hex");
     const credentialHashArray = Array.from(hashBytes);
 
-    // 3. Extract owner from metadata
-    const owner = new PublicKey(metadata.recipientWallet);
+    const issuerPublicKey = metadata.fields.find(
+      (field: any) => field.id === "issuerPublicKey"
+    ).value;
+
+    // 3. Issuer public key
+    const owner = new PublicKey(issuerPublicKey);
 
     // 4. Derive PDA
     const [credentialPda] = PublicKey.findProgramAddressSync(
@@ -87,6 +91,9 @@ export async function issueCredential(metadata: any) {
     };
   } catch (err) {
     console.error(err);
+    if (err.message.includes("already in use")) {
+      throw new Error("Certificate already issued.");
+    }
     throw new Error("Credential issuance failed (backend).");
   }
 }

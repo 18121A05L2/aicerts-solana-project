@@ -19,6 +19,11 @@ export function Navigation() {
             Verification
           </a>
         </li>
+        <li>
+          <a className="nav-link" href="/recipientView">
+            Recipient View
+          </a>
+        </li>
       </ul>
     </div>
   );

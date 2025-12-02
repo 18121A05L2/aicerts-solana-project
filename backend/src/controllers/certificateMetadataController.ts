@@ -19,7 +19,7 @@ export const createMetadata = async (req: Request, res: Response) => {
       credentialId: result.credentialId,
       credentialHash: result.credentialHash,
       txSignature: result.txSignature,
-      issuerPublicKey: result.issuer,
+      adminPublicKey: result.issuer,
       metadata,
     } as any);
 
@@ -33,7 +33,7 @@ export const createMetadata = async (req: Request, res: Response) => {
   }
 };
 
-export const getMetadataByCertId = async (req: Request, res: Response) => {
+export const getVerifiedMetaData = async (req: Request, res: Response) => {
   try {
     const certId = req.params.credentialId;
 
@@ -56,6 +56,34 @@ export const getMetadataByCertId = async (req: Request, res: Response) => {
         message: "CertificateId does not match with onchain data",
       });
     }
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getAllMetaData = async (req: Request, res: Response) => {
+  try {
+    const data = await CertificateMetadata.find();
+    res.json(data);
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getOwnerSpecificMetaData = async (req: Request, res: Response) => {
+  try {
+    const recipientName = req.body.recipientName;
+    const data = await CertificateMetadata.find({
+      "metadata.fields": {
+        $elemMatch: {
+          id: "recipientName",
+          value: { $regex: recipientName, $options: "i" }, // includes, case insensitive
+        },
+      },
+    });
+    res.json(data);
   } catch (err: any) {
     console.error(err);
     res.status(500).json({ success: false, message: err.message });
